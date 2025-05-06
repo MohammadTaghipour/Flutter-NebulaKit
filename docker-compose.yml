@@ -8,7 +8,7 @@ services:
         ANDROID_BUILD_TOOLS_VERSION: ${ANDROID_BUILD_TOOLS_VERSION:-33.0.2}
     container_name: flutter-dev
     working_dir: /app
-    command: bash -c "cd example && flutter --version && flutter pub get"
+    command: bash -c "cd ${FLUTTER_PROJECT_NAME} && flutter --version && flutter pub get && bash"
     volumes:
       - .:/app
       - flutter-cache:/root/.pub-cache

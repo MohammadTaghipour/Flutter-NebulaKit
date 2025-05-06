@@ -100,7 +100,7 @@ flutter build apk --release
 2. دستور زیر را اجرا کنید:
 
 ```sh
-flutter run -d web-server --web-port 8000
+flutter run -d web-server --web-port=8000 --web-hostname=0.0.0.0
 ```
 
 3. در مرورگر خود به آدرس `http://localhost:8000` بروید
