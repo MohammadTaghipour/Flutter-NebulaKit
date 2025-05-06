@@ -1,7 +1,10 @@
 ARG FLUTTER_VERSION=3.29.0
 FROM ghcr.io/cirruslabs/flutter:${FLUTTER_VERSION}
 
-# Installing JDK and Android SDK
+ARG ANDROID_PLATFORM_VERSION
+ARG ANDROID_BUILD_TOOLS_VERSION
+
+# نصب ابزارهای مورد نیاز
 RUN apt-get update && apt-get install -y \
     openjdk-17-jdk \
     curl \
@@ -9,26 +12,23 @@ RUN apt-get update && apt-get install -y \
     git \
     zip \
     xz-utils \
-    libglu1-mesa \
-    lib32stdc++6 \
-    lib32z1 \
-    && apt-get clean
+    libglu1-mesa
 
-# Setup Android SDK
-ENV ANDROID_HOME=/opt/android-sdk
-ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+# نصب Android SDK
+RUN mkdir -p /opt/android-sdk/cmdline-tools && \
+    cd /opt/android-sdk/cmdline-tools && \
+    curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
+    unzip cmdline-tools.zip && \
+    rm cmdline-tools.zip && \
+    mv cmdline-tools latest
 
-# Android SDK Configuration
-ARG ANDROID_PLATFORM_VERSION=33
-ARG ANDROID_BUILD_TOOLS_VERSION=33.0.2
+# تنظیم متغیرهای محیطی
+ENV PATH="/opt/android-sdk/cmdline-tools/latest/bin:${PATH}"
+ENV ANDROID_HOME="/opt/android-sdk"
 
-RUN mkdir -p $ANDROID_HOME/cmdline-tools && \
-    cd $ANDROID_HOME/cmdline-tools && \
-    curl -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip && \
-    unzip cmdline-tools.zip && rm cmdline-tools.zip && \
-    mv cmdline-tools latest && \
-    yes | sdkmanager --licenses && \
-    sdkmanager "platform-tools" "platforms;android-${ANDROID_PLATFORM_VERSION}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
+# نصب پلتفرم اندروید و ابزارهای ساخت
+RUN yes | sdkmanager --licenses && \
+    sdkmanager "platforms;android-${ANDROID_PLATFORM_VERSION}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
 
 WORKDIR /app
 

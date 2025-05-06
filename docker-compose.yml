@@ -13,10 +13,12 @@ services:
       - flutter-cache:/root/.pub-cache
     environment:
       - ANDROID_HOME=/opt/android-sdk
-      - DISPLAY=${DISPLAY}
+      - DISPLAY=host.docker.internal:0
     ports:
-      - "5037:5037" # for adb preview
+      - "5037:5037" # for ADB preview
       - "8000:8000" # for web preview
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     stdin_open: true
     tty: true
 
